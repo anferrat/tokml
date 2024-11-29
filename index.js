@@ -253,30 +253,47 @@ function removeMarkerStyle(_) {
 }
 
 function markerStyle(_, styleHash) {
-  const color = (_['marker-color'] || '7e7e7e').replace('#', '') + '00'
-  const symbol = googleIcons(_['marker-symbol']) ?? 'http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png'
+  const color = hexToKmlColor(_['marker-color'] ?? '#ffffff')
+  const isLetter = Boolean(_['marker-symbol']?.toLowerCase)
+  const symbol = isLetter ? googleIcons[_['marker-symbol'].toLowerCase()] + '.png' : 'http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png'
   return tag(
     'Style',
     { id: styleHash },
     tag('IconStyle',
-      tag('color', color),
-      tag('scale', '1.0'),
-      tag('Icon', 
-        tag('href', symbol))) + iconSize(_)
+      tag('color', color) +
+      tag('scale', '1.2') +
+      tag('Icon',
+        tag('href', symbol)) +
+      iconSize(_)) +
+    listStyle(_)
+  )
+}
+
+function listStyle(_) {
+  const isLetter = Boolean(_['marker-symbol']?.toLowerCase)
+  if (!isLetter)
+    return ''
+  else return tag('ListStyle',
+    tag('ItemIcon',
+      tag('href', googleIcons[_['marker-symbol'].toLowerCase()] + '-lv.png')
+    )
   )
 }
 
 function iconSize(_) {
-  return tag(
-    'hotSpot',
-    {
-      xunits: 'fraction',
-      yunits: 'fraction',
-      x: '0.5',
-      y: '0.5'
-    },
-    ''
-  )
+  const isLetter = Boolean(googleIcons[_['marker-symbol']])
+  if (isLetter)
+    return tag(
+      'hotSpot',
+      {
+        xunits: 'pixels',
+        yunits: 'pixels',
+        x: '32',
+        y: '1'
+      },
+      ''
+    )
+  else return ''
 }
 
 // ## Polygon and Line style
