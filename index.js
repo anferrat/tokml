@@ -1,3 +1,4 @@
+var googleIcons = require('./lib/google-icons.js')
 var esc = require('./lib/xml-escape')
 var strxml = require('./lib/strxml'),
   tag = strxml.tag
