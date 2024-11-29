@@ -20,8 +20,8 @@ module.exports = function tokml(geojson, options) {
       tag(
         'Document',
         documentName(options) +
-          documentDescription(options) +
-          root(geojson, options)
+        documentDescription(options) +
+        root(geojson, options)
       )
     )
   )
@@ -68,11 +68,11 @@ function feature(options, styleHashesArray) {
         'Placemark',
         attributes,
         name(_.properties, options) +
-          description(_.properties, options) +
-          extendeddata(_.properties) +
-          timestamp(_.properties, options) +
-          geometryString +
-          styleReference
+        description(_.properties, options) +
+        extendeddata(_.properties) +
+        timestamp(_.properties, options) +
+        geometryString +
+        styleReference
       )
     )
   }
@@ -252,26 +252,16 @@ function removeMarkerStyle(_) {
 }
 
 function markerStyle(_, styleHash) {
+  const color = (_['marker-color'] || '7e7e7e').replace('#', '') + '00'
+  const symbol = googleIcons(_['marker-symbol']) ?? 'http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png'
   return tag(
     'Style',
     { id: styleHash },
-    tag('IconStyle', tag('Icon', tag('href', iconUrl(_)))) + iconSize(_)
-  )
-}
-
-function iconUrl(_) {
-  var size = _['marker-size'] || 'medium',
-    symbol = _['marker-symbol'] ? '-' + _['marker-symbol'] : '',
-    color = (_['marker-color'] || '7e7e7e').replace('#', '')
-
-  return (
-    'https://api.tiles.mapbox.com/v3/marker/' +
-    'pin-' +
-    size.charAt(0) +
-    symbol +
-    '+' +
-    color +
-    '.png'
+    tag('IconStyle',
+      tag('color', color),
+      tag('scale', '1.0'),
+      tag('Icon', 
+        tag('href', symbol))) + iconSize(_)
   )
 }
 
@@ -319,7 +309,7 @@ function polygonAndLineStyle(_, styleHash) {
       'color',
       hexToKmlColor(_['stroke'], _['stroke-opacity']) || 'ff555555'
     ) +
-      tag('width', {}, _['stroke-width'] === undefined ? 2 : _['stroke-width'])
+    tag('width', {}, _['stroke-width'] === undefined ? 2 : _['stroke-width'])
   )
 
   var polyStyle = ''
